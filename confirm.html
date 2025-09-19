@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>投稿内容確認</title>
+  </head>
+  <body>
+    <h1>投稿内容の確認</h1>
+    <div id="confirmData"></div>
+    <button id="submitBtn">投稿する</button>
+
+    <script type="module">
+      import { db, collection, addDoc } from "./firebase.js";
+
+      const data = JSON.parse(sessionStorage.getItem("postData"));
+      if (!data) {
+        alert("投稿データが見つかりません。最初からやり直してください。");
+        window.location.href = "post.html";
+      }
+
+      const confirmDiv = document.getElementById("confirmData");
+      confirmDiv.innerHTML = `
+      <p><strong>タイトル:</strong> ${data.title}</p>
+      <p><strong>概要:</strong> ${data.description}</p>
+      <p><strong>時間帯:</strong> ${data.startTime} ~ ${data.endTime}</p>
+      <p><strong>時給:</strong> ${data.wage}円</p>
+      <p><strong>場所:</strong> ${data.location}</p>
+      <p><strong>開催期間:</strong> ${data.eventStart} ~ ${data.eventEnd}</p>
+    `;
+
+      document
+        .getElementById("submitBtn")
+        .addEventListener("click", async () => {
+          try {
+            await addDoc(collection(db, "jobs"), data);
+            sessionStorage.removeItem("postData");
+            window.location.href = "done.html";
+          } catch (e) {
+            alert("投稿に失敗しました: " + e.message);
+          }
+        });
+    </script>
+  </body>
+</html>

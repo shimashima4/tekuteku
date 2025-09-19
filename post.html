@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>バイト募集投稿</title>
+  </head>
+  <body>
+    <h1>バイト募集記事投稿</h1>
+    <form id="postForm">
+      <label>タイトル: <input type="text" name="title" required /></label><br />
+      <label>概要: <textarea name="description" required></textarea></label
+      ><br />
+      <label>開始時間: <input type="time" name="startTime" required /></label
+      ><br />
+      <label>終了時間: <input type="time" name="endTime" required /></label
+      ><br />
+      <label>時給: <input type="number" name="wage" required /></label><br />
+      <label>場所: <input type="text" name="location" required /></label><br />
+      <label>開催開始日: <input type="date" name="eventStart" required /></label
+      ><br />
+      <label>開催終了日: <input type="date" name="eventEnd" required /></label
+      ><br />
+      <button type="submit">投稿</button>
+    </form>
+
+    <script>
+      document.getElementById("postForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        data.createdAt = new Date().toISOString(); // 登録日時を追加
+
+        sessionStorage.setItem("postData", JSON.stringify(data));
+        window.location.href = "confirm.html";
+      });
+    </script>
+  </body>
+</html>

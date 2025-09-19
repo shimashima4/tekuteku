@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>バイト一覧</title>
+  </head>
+  <body>
+    <h1>バイト募集一覧</h1>
+
+    <form id="filterForm">
+      <label>キーワード: <input type="text" name="keyword" /></label>
+      <label>最低時給: <input type="number" name="wage" /></label>
+      <label>日付: <input type="date" name="date" /></label>
+      <button type="submit">検索</button>
+      <button type="button" id="resetBtn">リセット</button>
+    </form>
+
+    <div id="jobList"></div>
+
+    <script type="module">
+      import { db } from "./firebase.js";
+      import {
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+      const jobListDiv = document.getElementById("jobList");
+
+      async function loadJobs(filters = {}) {
+        jobListDiv.innerHTML = "読み込み中...";
+
+        const querySnapshot = await getDocs(collection(db, "jobs"));
+        let jobs = [];
+        querySnapshot.forEach((doc) => {
+          jobs.push(doc.data());
+        });
+
+        // --- 絞り込み処理 ---
+        if (filters.keyword) {
+          jobs = jobs.filter(
+            (job) =>
+              job.title.includes(filters.keyword) ||
+              job.description.includes(filters.keyword)
+          );
+        }
+
+        if (filters.wage) {
+          jobs = jobs.filter((job) => Number(job.wage) >= Number(filters.wage));
+        }
+
+        if (filters.date) {
+          jobs = jobs.filter(
+            (job) =>
+              job.eventStart <= filters.date && job.eventEnd >= filters.date
+          );
+        }
+
+        // --- 一覧表示 ---
+        if (jobs.length === 0) {
+          jobListDiv.innerHTML = "<p>該当する募集はありません。</p>";
+          return;
+        }
+
+        // 表示をさせる
+        jobListDiv.innerHTML = jobs
+          .map(
+            (job) => `
+          <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+            <h3>${job.title}</h3>
+            <p>${job.description}</p>
+            <p>時間帯: ${job.startTime} ~ ${job.endTime}</p>
+            <p>時給: ${job.wage}円</p>
+            <p>場所: ${job.location}</p>
+            <p>開催期間: ${job.eventStart} ~ ${job.eventEnd}</p>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // 初回ロード
+      loadJobs();
+
+      // フィルター検索
+      document.getElementById("filterForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const filters = Object.fromEntries(formData.entries());
+        loadJobs(filters);
+      });
+
+      // リセットボタン
+      resetBtn.addEventListener("click", () => {
+        filterForm.reset(); // フォームの入力値をリセット
+        loadJobs(); // 全件再表示
+      });
+    </script>
+  </body>
+</html>

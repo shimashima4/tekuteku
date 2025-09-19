@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .page {
+        display: none;
+      }
+      .active {
+        display: block;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 投稿フォームページ -->
+    <div id="formPage" class="page active">
+      <h2>バイト募集記事の投稿</h2>
+      <form id="postForm">
+        <label>タイトル: <input type="text" id="title" required /></label>
+        <label>概要: <textarea id="description" required></textarea></label>
+        <label>開始時間: <input type="time" id="startTime" required /></label>
+        <label>終了時間: <input type="time" id="endTime" required /></label>
+        <label>時給: <input type="number" id="wage" required /></label>
+        <label>場所: <input type="text" id="location" required /></label>
+        <button type="submit">投稿確認へ</button>
+      </form>
+    </div>
+
+    <!-- 確認ページ -->
+    <div id="confirmPage" class="page">
+      <h2>投稿内容の確認</h2>
+      <div id="confirmContent"></div>
+      <button id="backButton">戻る</button>
+      <button id="submitButton">投稿する</button>
+    </div>
+
+    <!-- 完了ページ -->
+    <div id="completePage" class="page">
+      <h2>依頼が完了しました！</h2>
+      <p>投稿いただきありがとうございます。</p>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+      // Firebase 設定
+      const firebaseConfig = {
+        apiKey: "AIzaSyCLTuTzvUxn_PhbY2nkKbYu-rotx3gfT20",
+        authDomain: "tekuteku-ac503.firebaseapp.com",
+        projectId: "tekuteku-ac503",
+        storageBucket: "tekuteku-ac503.firebasestorage.app",
+        messagingSenderId: "456395776640",
+        appId: "1:456395776640:web:86b2b6f7518dd099b6bc65",
+        measurementId: "G-XCSC4JJ4NJ",
+      };
+
+      // Firebase 初期化
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      export { db, collection, addDoc };
+    </script>
+  </body>
+</html>
