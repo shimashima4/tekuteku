@@ -1,15 +1,19 @@
 import React from "react";
-import JobBoard from "./components/JobBoard";
-import { db } from "./firebase"; // App.js ならこの書き方
-// JobBoard.jsx なら "../firebase"
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NewPost from "./pages/NewPost";
+import ConfirmPost from "./pages/ConfirmPost";
+import PostComplete from "./pages/PostComplete";
+import JobList from "./pages/JobList";
 
-function App() {
+export default function App() {
   return (
-    <div>
-      <JobBoard />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<NewPost />} />
+        <Route path="/confirm" element={<ConfirmPost />} />
+        <Route path="/complete" element={<PostComplete />} />
+        <Route path="/list" element={<JobList />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
